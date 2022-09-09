@@ -166,4 +166,4 @@ cython_debug/
 *.out
 *.app
 
-############# C++ ignore - start ################
+############# C++ ignore - end ################
