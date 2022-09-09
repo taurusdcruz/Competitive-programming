@@ -1,0 +1,6 @@
+
+1.Quickly Comment Debugging code before submitting solution to Judge
+->
+Use Ctrl + R in CodeBlocks to quickly comment the debugging code.
+	1.Replace //c_b with /*
+	2.Replace //c_e with */
