@@ -233,7 +233,7 @@ class PT{
 };
 
 //Class to do direction(N,S,E,W) calculations
-template<typename T=long long, typename V=long long >
+template<typename T=long long, typename U=long long, typename BULL=long long >
 class direction{
     public:
     //dir_indx2coord:   0-N,1-E,2-S,3-W
@@ -251,35 +251,35 @@ class direction{
                                 ,pair<T,char>(3,'<')   };
 
     //member functions
-    template<typename U=long long>
+    // template<typename U=long long>
     inline T get_dir_indx(U dy, U dx){
 
         if(!((((ll)abs(dx))^((ll)abs(dy))) == 1)){ return -1;}
         return dir_coord2indx[pair<T,T>(dy,dx)];
     }
     
-    template<typename U=long long>
+    // template<typename U=long long>
     inline pair<T,T> get_dir_coord(U&& idir){
         if(idir<0 or idir>3){ return pair<T,T>(-1,-1);}
         return dir_indx2coord[idir];
     }
-    template<typename U=long long>
+    // template<typename U=long long>
     inline T rotate_90(U&& indx){
         indx=(indx+1)%(T)4;
         return (T)indx;
     }
 
-    template<typename U=long long>
+    // template<typename U=long long>
     inline pair<T,T> rotate_90(pair<U,U>&& dir_coord){
         auto&& [dy,dx]=dir_coord;
-        auto indx=move(direction<T>::get_dir_indx(dy,dx));
+        auto indx=move(direction<T,U>::get_dir_indx(dy,dx));
         rotate_90(indx);
-        dir_coord=move(direction<T>::get_dir_coord(indx));
+        dir_coord=move(direction<T,U>::get_dir_coord(indx));
         return pair<T,T>(dir_coord);//reconstruct a pair from another pair
     }
 
     //Rotate a complex number clockwise by 90deg
-    template<typename U=long double>
+    // template<typename U=long double>
     complex<long double> rotate_90(complex<U> z){
         auto z1=complex<U>(exp(-(PI/2)*1il));
         z1*=z;
@@ -291,18 +291,18 @@ class direction{
         return complex<long double>(z1);
     }
 
-    //specialization of member functions
-    T get_dir_indx(V dy, V dx);
-    pair<T,T> get_dir_coord(V&& idir);
-    T rotate_90(V&& indx);
-    pair<T,T> rotate_90(pair<V,V>&& dir_coord);
-    complex<long double> rotate_90(complex<V> z);
+    // //specialization of member functions
+    // private:
+    // inline void free_specializer(){
+
+    // }
+
 };
 
 
 //Class to store the state at each point in the forest of the the Farmer/Cow
-template<typename T=long long, typename V=long long>  //!!!T is the type which most of the functions return by !!!
-class State : public direction<T,V>{     //using direction<T> in member functions of State to return values in T
+template<typename T=long long, typename U=long long>  //!!!T is the type which most of the functions return by !!!
+class State : public direction<T,U>{     //using direction<T> in member functions of State to return values in T
     public:
     //store coordinates, direction & time
     T x
@@ -323,7 +323,8 @@ class State : public direction<T,V>{     //using direction<T> in member function
     ,dy(_dy)
     ,t(_t)
     {};
-    template<typename U=long long>
+
+    // template<typename U=long long>
     //note: for the constructor the template arguments will be deduced  using template argument deduction
     State(State<U> rhs)
     :x(rhs.x)
@@ -334,22 +335,22 @@ class State : public direction<T,V>{     //using direction<T> in member function
     {};
 
     //member functions
-    template<typename T1=long long,typename U=long long>
-    friend bool operator== ( State<T1> lhs,State<U> rhs){
+    template<typename T1=long long,typename T2=long long>
+    friend bool operator== ( State<T1> lhs,State<T2> rhs){
         // auto lhs=*this;
         return (   make_tuple(lhs.x,lhs.y,lhs.dx,lhs.dy)
                     == make_tuple(rhs.x,rhs.y,rhs.dx,rhs.dy)  );
     }
 
-    template<typename T1=long long,typename U=long long >
-    friend bool operator< (State<T1> lhs,const State<U>& rhs){
+    template<typename T1=long long,typename T2=long long >
+    friend bool operator< (State<T1> lhs,const State<T2>& rhs){
         // auto lhs=*this;
         return (   make_tuple(lhs.x,lhs.y,lhs.dx,lhs.dy)
                     <make_tuple(rhs.x,rhs.y,rhs.dx,rhs.dy)  );
     }
 
     //operator=() must be a non static member function
-    template<typename U=long long >
+    // template<typename U=long long >
     State operator= ( const State<U> rhs){
         this->x=rhs.x;
         this->y=rhs.y;
@@ -359,35 +360,64 @@ class State : public direction<T,V>{     //using direction<T> in member function
         return *this;
     }
 
-    template<typename U=long long>
+    // template<typename U=long long>
     inline T get_dir_indx(State<U> s){
         return direction<T>::get_dir_indx(s.dy,s.dx);
     }
 
-    template<typename U=long long>
+    // template<typename U=long long>
     inline pair<T,T> get_dir_coord(State<U> s){
         return direction<T>::get_dir_coord(get_dir_indx(s));
     }
     
-    template<typename U=long long>
+    // template<typename U=long long>
     inline State<T> rotate_90(State<U>& s){
         tie(s.y,s.x)=direction<T>::rotate_90(pair<T,T>(s.y,s.x));
         return State<T>(s);
     }    
 
-    //specialization of member functions
-    T get_dir_indx(State<V> s);
-    pair<T,T> get_dir_coord(State<V> s);
-    State<T> rotate_90(State<V>& s);
+    // // specialization of member functions
+    // private:
+    // inline void free_specializer(){
+        
+    // }
+
 
 };
+
+// //helper class to initialize all the template function
+// template<typename T,typename U, typename BULL>
+// class Helper{
+//     public:
+//     void inline specialize_direction(){
+//         template<>
+//         T direction<T>::get_dir_indx<U>(U , U );
+//         template<>
+//         pair<T,T> direction<T>::get_dir_coord<U>(U&& );
+//         template<>
+//         T direction<T>::rotate_90<U>(U&& );
+//         template<>
+//         pair<T,T> direction<T>::rotate_90<U>(pair<U,U>&& );
+//         template<>
+//         complex<long double> direction<T>::rotate_90<U>(complex<U> );
+//     }
+    
+//     void inline specialize_State(){
+//         template<>
+//         T State<T>::get_dir_indx<U>(State<U> );
+//         template<>        
+//         pair<T,T> State<T>::get_dir_coord<U>(State<U> );
+//         template<>
+//         State<T> State<T>::rotate_90<U>(State<U>& );        
+//     }
+// };
 
 template<typename T,typename FUNC>
 bool test_bi_op(T s1, T s2, FUNC bi_op){
     return s1.bi_op(s2);
 }
-template<typename T=long long, typename V=long long >
-class Ttwo:public State<T,V>{//Using State<T> in member functions of Ttwo to return in T!
+template<typename T=long long, typename U=long long >
+class Ttwo:public State<T,U>{//Using State<T> in member functions of Ttwo to return in T!
 //By default data members are private
 //
 string task;
@@ -395,13 +425,20 @@ vector<vector<char>> frst;//forest where FJ has lost his cow
 vector<vector<char>> path;//path taken
 ll res;
 State<T> sFRM_init,sCW_init;//initial state of FRM & CW
-set<pair<State<T,V>,State<T,V>>> vis_simulation_state;//set of visited states pair<State<>,State<>>
+set<pair<State<T>,State<T>>> vis_simulation_state;//set of visited states pair<State<>,State<>>
+
+// //typedef's for readability
+// using State = State<T,U>;
+// using direction = direction<T,U>;
 
 public:
     //constructor
     Ttwo(string _task):
         task(_task)
         {
+            //specialize template methos of classes
+            // Helper<T,U,ll>
+
             //Open streams
             open_streams();
             //read input and initialize class member variables
@@ -434,11 +471,11 @@ public:
             for(ll cx=1;cx<11;++cx){
                 cin>>frst[ry][cx];
                 if(frst[ry][cx]=='F'){ 
-                    auto [dy,dx]=direction<T,V>::get_dir_coord(0l);
-                    sFRM_init=State<T,V>(cx,ry,dx,dy,0);}
+                    auto [dy,dx]=direction<T,U>::get_dir_coord(0l);
+                    sFRM_init=State<T>(cx,ry,dx,dy,0);}
                 if(frst[ry][cx]=='C'){ 
-                    auto [dy,dx]=direction<T,V>::get_dir_coord(0l);
-                    sCW_init = State<T,V>(cx,ry,dx,dy,0);}
+                    auto [dy,dx]=direction<T,U>::get_dir_coord(0l);
+                    sCW_init = State<T>(cx,ry,dx,dy,0);}
             }
         }
         path=frst;
@@ -459,11 +496,11 @@ public:
         
         // auto less12=s1<s2;//test_bi_op(s1,s2,Ttwo<T>::operator<);
         // cout<<(less12)?"Y":"N";
-        // res=iterative();
+        res=iterative();
         //End of Logic
     }
     // template<typename U=long long>
-    char get_frst_cell(State<T,V> s){
+    char get_frst_cell(State<T> s){
         if  (   !(      (s.y>=0 && s.y<frst.size()) 
                     &&  (s.x>=0 && s.x<frst[s.y].size()) 
                 )   
@@ -474,7 +511,7 @@ public:
     }
     //If number of consecutive rotations = 4
     //Means we were initially trapped    
-    bool check_initially_trapped(State<T,V> s){
+    bool check_initially_trapped(State<T> s){
         bool flag_trapped=true;
         ll idir=0;
         //check if not all directions are blocked
@@ -498,11 +535,11 @@ public:
 
     //checking neighbouring cells for a freeway ahead
     // template<typename U=long long>
-    void move_forward(  State<T,V>& s ){
+    void move_forward(  State<T>& s ){
         // increase time by 1
         s.t+=1;
         //Check if we need to rotate in-case of an obstacle ahead...
-        State<T,V> s1(s.x+s.dx,s.y+s.dy,s.dx,s.dy,s.t);
+        State<T> s1(s.x+s.dx,s.y+s.dy,s.dx,s.dy,s.t);
         if(get_frst_cell(s1) == '*'){
             this->rotate_90(s);//rotate 90 deg clk-wise
             path[s.y][s.x]='@';
@@ -555,8 +592,8 @@ public:
 template<typename T=long long, typename U=long long >
 class A{
     public:
-    // template<typename U>
-    inline void f(U var){
+    template<typename U1>
+    void f(U1 var){
         cout<<"C1:"<<var<<endl;
     }
 };
@@ -564,19 +601,27 @@ class A{
 template<typename T=long long, typename U=long long>
 class B:public A<T,U>{
     public:
-
-    // template<typename U>
-    inline void f(pair<U,U> var){
+    template<typename U1,typename U2>
+    void f(pair<U1,U2> var){
         cout<<"C2:"<<var.first<<" "<<var.second<<endl;
     }
+    //
 };
-
+namespace NS_DECLARATIONS{
+    template<typename U1>
+    void f(U1);
+    template<typename U1, typename U2>
+    void f(pair<U1,U2>);
+}
 template<typename T=long long, typename U=long long >
 class Tester:public B<T,U>{
     public:
     void run_your_test(){
-        pair<ll,LD> x1=make_pair(1,1.0);
-        this->f(x1);
+        ll x1=1;
+        pair<ll,LD> x2=make_pair(1,1.0);
+
+        // A<T,U>::f(x1);
+        // B<T,U>::f(x2);
     }
 };
 int main( )
@@ -584,9 +629,15 @@ int main( )
     // cout<<(State<>(0,0,0,0,0)<State<>(0,0,0,1,0)?("Y"):("N"))<<endl;
     //construct a class object and immediately call a function on it
     //instead of instantiating a class object and then calling a function using that object
-
+    cout<<"xxxxx"<<endl;
     // Tester<ll,ll>().run_your_test();
-    Ttwo<ll>("ttwo");
+    // Ttwo<ll>("ttwo");
+    using x=int;
+    x y1;
+    cout<<typeid(x).name()<<endl;
+    using x=x;
+    int x=1;
+    cout<<x<<endl;
 	return 0;
 }
 
