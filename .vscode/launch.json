@@ -5,6 +5,24 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "autoReload": {
+                "enable": true
+            },
+            "args": [
+                "<",
+                "${command:extension.commandvariable.file.fileDirnamePosix}/input.txt",
+                ">",
+                "${command:extension.commandvariable.file.fileDirnamePosix}/output.txt"
+            ],
+            "redirectOutput": true,
+        },
+        {
             "name": "g++.exe build and debug active file",
             "type": "cppdbg",
             "request": "launch",
@@ -25,8 +43,6 @@
             ],
             "preLaunchTask": "g++.exe build active file"
         },
-
-
         {
             "name": "g++ build & run active file",
             "type": "cppdbg",

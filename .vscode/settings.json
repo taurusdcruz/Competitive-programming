@@ -7,5 +7,7 @@
         "ostream": "cpp",
         "iostream": "cpp",
         "vector": "cpp"
-    }
+    },
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
 }
