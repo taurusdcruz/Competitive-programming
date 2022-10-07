@@ -42,6 +42,7 @@ def min_excluding_none(*args):
 
 
 def solve(t):
+    res = None
     print("Case #{}: {}".format(t + 1, res))
 
 
