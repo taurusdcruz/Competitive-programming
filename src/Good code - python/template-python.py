@@ -1,24 +1,37 @@
 import sys
-import functools as _ft
-import itertools as _it
-import operator as _op
-import bisect as _bsct
-import collections as _cllctn
-import heapq as _hpq
+import functools as FT
+import itertools as IT
+import operator as OP
+import bisect as BSCT
+import collections as CLLN
+import heapq as HPQ
 
 sys.setrecursionlimit(10**6)
-dd = _cllctn.defaultdict
-bl = _bsct.bisect_left
-br = _bsct.bisect_right
+dd = CLLN.defaultdict
+bl = BSCT.bisect_left
+br = BSCT.bisect_right
 
 MOD = int(1e9 + 7)
-DONT_LOG = 0
+def log(func):
+    _d = 0
+    @FT.wraps(func)
+    def wrapper(*args, **kwargs):
+        nonlocal _d
+        _d+=1
+        indent = "".join(["-|" for i in range(_d)])
+        pref = (indent, args)
+        print(*pref)
+        res = func(*args, **kwargs)
+        print(*pref, res)
+        _d+=-1
+        return res
+    return wrapper
 
+def is_bit_set(N, i):
+    return (N >> i) & 1
 
-def log(level=0):
-    prefix = "-".join(["|" for _ in range(level)])
-    return lambda *args: None if (DONT_LOG) else print(prefix, *args)
-
+def set_bit(N, i):
+    return N | (1 << i)
 
 def exists(x):
     return x is not None
